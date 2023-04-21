@@ -2,7 +2,7 @@ use std::net::TcpStream;
 
 use log::info;
 
-use crate::{AppMetadata, Error, ReadAll};
+use crate::{traits::ReadAll, AppMetadata, Error};
 
 #[must_use = "iterators are lazy and do nothing unless consumed"]
 pub struct AppRegistration {

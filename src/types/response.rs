@@ -1,4 +1,6 @@
-use crate::{ToBytesVec, RESPONSE_TYPE_SIZE};
+use crate::ToBytes;
+
+use super::super::constants::RESPONSE_TYPE_SIZE;
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum Response {
@@ -42,4 +44,4 @@ impl From<Vec<u8>> for Response {
     }
 }
 
-impl ToBytesVec for Response {}
+impl ToBytes for Response {}

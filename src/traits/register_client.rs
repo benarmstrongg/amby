@@ -2,7 +2,9 @@ use std::{io::Write, net::TcpStream, process};
 
 use log::{error, info};
 
-use crate::{App, ClientType, Protocol, ReadAll, Response};
+use crate::{types::ClientType, App, Protocol, Response};
+
+use super::ReadAll;
 
 pub trait RegisterClient {
     fn get_client_type() -> ClientType;

@@ -4,9 +4,11 @@ use std::net::TcpStream;
 use std::process;
 use std::time::Duration;
 
-use crate::traits::{ReadAll, ToBytesVec};
+use crate::traits::{ReadAll, RegisterClient, ToBytes};
 use crate::types::{Error, ReadRequest, Request, Result, WriteRequest};
-use crate::{AppRegistration, RegisterClient, Response};
+use crate::Response;
+
+use super::AppRegistration;
 
 pub struct Protocol {
     pub name: String,

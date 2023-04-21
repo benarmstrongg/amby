@@ -1,5 +1,5 @@
 use crate::constants::{NAME_MAX_SIZE, REQUEST_TYPE_SIZE};
-use crate::traits::{ToBytesSlice, ToBytesVec, TryFromSlice};
+use crate::traits::{ToBytes, ToSlice, TryFromSlice};
 use crate::types::Error;
 
 #[derive(Debug, PartialEq, Clone)]
@@ -96,4 +96,4 @@ impl TryFrom<Vec<u8>> for Request {
     }
 }
 
-impl ToBytesVec for Request {}
+impl ToBytes for Request {}

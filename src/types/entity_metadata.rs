@@ -1,5 +1,5 @@
 use crate::constants::{NAME_MAX_SIZE, PATH_MAX_SIZE};
-use crate::traits::{ToBytesSlice, ToBytesVec, TryFromSlice};
+use crate::traits::{ToBytes, ToSlice, TryFromSlice};
 use crate::types::Error;
 
 #[derive(Debug, PartialEq, Clone)]
@@ -42,4 +42,4 @@ impl TryFrom<Vec<u8>> for EntityMetadata {
     }
 }
 
-impl ToBytesVec for EntityMetadata {}
+impl ToBytes for EntityMetadata {}

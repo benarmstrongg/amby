@@ -2,9 +2,9 @@ use log::{error, info};
 use std::process;
 use std::{collections::HashMap, io::Write, net::TcpStream};
 
-use crate::traits::{Entity, ReadAll, Service, ToBytesVec};
+use crate::traits::{Entity, ReadAll, RegisterClient, Service, ToBytes};
 use crate::types::{AppMetadata, EntityMetadata, Request, ServiceMetadata};
-use crate::{ReadRequest, RegisterClient, Response, WriteRequest};
+use crate::{ReadRequest, Response, WriteRequest};
 
 pub struct App {
     stream: TcpStream,

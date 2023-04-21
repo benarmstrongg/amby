@@ -1,6 +1,6 @@
 use crate::constants::{NAME_MAX_SIZE, PATH_MAX_SIZE};
-use crate::traits::{ToBytesList, ToBytesVec};
-use crate::{Error, ToBytesSlice, TryFromBytesList, TryFromSlice};
+use crate::traits::{ToBytes, ToSlice, TryFromBytesList, TryFromSlice};
+use crate::{Error, ToBytesList};
 
 use super::ServiceMetadata;
 
@@ -16,7 +16,7 @@ impl Into<Vec<u8>> for AppMetadata {
         let mut data = vec![];
         data.extend_from_slice(&self.name.to_slice::<NAME_MAX_SIZE>());
         data.extend_from_slice(&self.path.to_slice::<PATH_MAX_SIZE>());
-        data.extend(self.services.to_bytes_list());
+        data.extend::<Vec<u8>>(self.services.to_bytes());
         data
     }
 }
@@ -39,4 +39,4 @@ impl TryFrom<Vec<u8>> for AppMetadata {
     }
 }
 
-impl ToBytesVec for AppMetadata {}
+impl ToBytes for AppMetadata {}
