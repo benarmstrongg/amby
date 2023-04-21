@@ -20,7 +20,7 @@ impl App {
             path: format!("/{}", name),
             services: vec![],
         };
-        let stream = App::connect(metadata.clone());
+        let stream = App::connect();
         Self {
             stream,
             metadata,
@@ -35,28 +35,17 @@ impl App {
         };
     }
 
-    fn connect(metadata: AppMetadata) -> TcpStream {
+    fn connect() -> TcpStream {
         match TcpStream::connect("127.0.0.1:4000") {
-            Ok(mut stream) => {
+            Ok(stream) => {
                 info!("Connected to tcp stream. Registering app");
-                match stream.write_all(&metadata.to_bytes()) {
-                    Ok(()) => {
-                        info!("Sent app metadata to tcp stream. App registered");
-                        stream
-                    }
-                    Err(err) => {
-                        error!("Error writing app metadata to tcp stream. Please try again");
-                        error!("Error: {err}");
-                        process::exit(1);
-                    }
-                }
+                stream
             }
             Err(err) => {
                 error!("Error connecting to tcp stream. Error: {err}");
                 process::exit(1);
             }
         }
-        // todo! listen for res before saying "App registered"
     }
 
     pub fn path(mut self, path: &str) -> Self {
@@ -77,10 +66,11 @@ impl App {
             });
             self.entities.insert(entity.name(), entity);
         }
+        let path = format!("{}{}", &self.metadata.path, service.path());
         let service_metadata = ServiceMetadata {
             name: service.name(),
-            path: service.path(),
             entities: entity_metadata,
+            path,
         };
         self.metadata.services.push(service_metadata);
         self

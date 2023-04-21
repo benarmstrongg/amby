@@ -14,10 +14,10 @@ pub trait RegisterClient {
         };
         match stream.write_all(data) {
             Ok(()) => {
-                info!("Wrote {client_type} name to tcp stream. Waiting for response",);
+                info!("Wrote {client_type} metadata to tcp stream. Waiting for response",);
             }
             Err(err) => {
-                error!("Error writing {client_type} name to tcp stream. Error: {err}");
+                error!("Error writing {client_type} metadata to tcp stream. Error: {err}");
                 process::exit(1);
             }
         };

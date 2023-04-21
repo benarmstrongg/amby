@@ -1,5 +1,6 @@
 mod app_client;
 mod app_metadata;
+mod app_registration;
 mod client_type;
 mod entity_metadata;
 mod error;
@@ -11,6 +12,7 @@ mod service_metadata;
 
 pub use app_client::App;
 pub use app_metadata::AppMetadata;
+pub use app_registration::AppRegistration;
 pub use client_type::ClientType;
 pub use entity_metadata::EntityMetadata;
 pub use error::Error;
