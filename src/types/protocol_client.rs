@@ -10,17 +10,17 @@ use crate::{AppRegistration, RegisterClient, Response};
 
 pub struct Protocol {
     pub name: String,
-    protocol_stream: TcpStream,
+    stream: TcpStream,
 }
 
 impl Protocol {
     pub fn create(name: &str) -> Self {
         Protocol::init_logger();
-        let protocol_stream = Protocol::connect_protocol_stream();
-        Protocol::register_client(&protocol_stream, name.as_bytes());
+        let stream = Protocol::connect_protocol_stream();
+        Protocol::register_client(&stream, name.as_bytes());
         Self {
             name: name.into(),
-            protocol_stream,
+            stream,
         }
     }
 
@@ -68,7 +68,7 @@ impl Protocol {
     }
 
     pub fn read(&mut self) -> Result<Vec<u8>> {
-        match self.protocol_stream.read_all() {
+        match self.stream.read_all() {
             Ok(res) => Ok(res),
             Err(err) => return Err(Error::IoError(err)),
         }
@@ -77,7 +77,7 @@ impl Protocol {
     pub fn send_read_request(&mut self, req: ReadRequest) -> Result<Response> {
         info!("Sending read request to app {}", &req.app_name);
         let requset = Request::Read(req);
-        match self.protocol_stream.write_all(&requset.to_bytes()) {
+        match self.stream.write_all(&requset.to_bytes()) {
             Ok(_) => info!("Sent read request"),
             Err(err) => return Err(Error::IoError(err)),
         };
@@ -90,7 +90,7 @@ impl Protocol {
     pub fn send_write_request(&mut self, req: WriteRequest) -> Result<Response> {
         info!("Sending write request to app {}", &req.app_name);
         let request = Request::Write(req);
-        match self.protocol_stream.write_all(&request.to_bytes()) {
+        match self.stream.write_all(&request.to_bytes()) {
             Ok(_) => info!("Sent write request"),
             Err(err) => return Err(Error::IoError(err)),
         };
@@ -105,7 +105,7 @@ impl Clone for Protocol {
     fn clone(&self) -> Self {
         Self {
             name: self.name.clone(),
-            protocol_stream: self.protocol_stream.try_clone().unwrap(),
+            stream: self.stream.try_clone().unwrap(),
         }
     }
 }
