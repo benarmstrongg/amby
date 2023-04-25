@@ -6,24 +6,21 @@ use std::time::Duration;
 
 use crate::traits::{ReadAll, RegisterClient, ToBytes};
 use crate::types::{Error, ReadRequest, Request, Result, WriteRequest};
-use crate::Response;
+use crate::{Name, Response};
 
 use super::AppRegistration;
 
 pub struct Protocol {
-    pub name: String,
+    pub name: Name,
     stream: TcpStream,
 }
 
 impl Protocol {
-    pub fn create(name: &str) -> Self {
+    pub fn create(name: Name) -> Self {
         Protocol::init_logger();
         let stream = Protocol::connect_protocol_stream();
-        Protocol::register_client(&stream, name.as_bytes());
-        Self {
-            name: name.into(),
-            stream,
-        }
+        Protocol::register_client(&stream, &name.clone().to_bytes());
+        Self { name, stream }
     }
 
     fn init_logger() {

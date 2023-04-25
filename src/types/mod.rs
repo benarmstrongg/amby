@@ -9,6 +9,7 @@ mod request;
 mod response;
 mod result;
 mod service_metadata;
+mod sized_string;
 
 pub use app_client::App;
 pub use app_metadata::AppMetadata;
@@ -21,3 +22,4 @@ pub use request::{ReadRequest, Request, WriteRequest};
 pub use response::Response;
 pub use result::Result;
 pub use service_metadata::ServiceMetadata;
+pub use sized_string::{Name, Path};

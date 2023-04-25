@@ -4,20 +4,21 @@ use std::{collections::HashMap, io::Write, net::TcpStream};
 
 use crate::traits::{Entity, ReadAll, RegisterClient, Service, ToBytes};
 use crate::types::{AppMetadata, EntityMetadata, Request, ServiceMetadata};
-use crate::{ReadRequest, Response, WriteRequest};
+use crate::{Name, Path, ReadRequest, Response, WriteRequest};
 
 pub struct App {
     stream: TcpStream,
     metadata: AppMetadata,
-    entities: HashMap<String, Box<dyn Entity + 'static>>,
+    entities: HashMap<Name, Box<dyn Entity + 'static>>,
 }
 
 impl App {
-    pub fn create(name: &str) -> Self {
+    pub fn create(name: Name) -> Self {
         App::init_logger();
+        let path = Path::from_str_unchecked(&format!("/{}", &name));
         let metadata = AppMetadata {
-            name: name.to_string(),
-            path: format!("/{}", name),
+            name,
+            path,
             services: vec![],
         };
         let stream = App::connect();
@@ -48,8 +49,8 @@ impl App {
         }
     }
 
-    pub fn path(mut self, path: &str) -> Self {
-        self.metadata.path = path.to_string();
+    pub fn path(mut self, path: Path) -> Self {
+        self.metadata.path = path;
         self
     }
 
@@ -57,7 +58,12 @@ impl App {
         let mut entity_metadata: Vec<EntityMetadata> = vec![];
         let entities = service.get_entities();
         for entity in entities {
-            let path = format!("{}{}{}", &self.metadata.path, service.path(), entity.path());
+            let path = Path::from_str_unchecked(&format!(
+                "{}{}{}",
+                &self.metadata.path,
+                service.path(),
+                entity.path()
+            ));
             entity_metadata.push(EntityMetadata {
                 name: entity.name(),
                 read: entity.is_read(),
@@ -66,7 +72,7 @@ impl App {
             });
             self.entities.insert(entity.name(), entity);
         }
-        let path = format!("{}{}", &self.metadata.path, service.path());
+        let path = Path::from_str_unchecked(&format!("{}{}", &self.metadata.path, service.path()));
         let service_metadata = ServiceMetadata {
             name: service.name(),
             entities: entity_metadata,

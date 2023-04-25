@@ -6,6 +6,7 @@ pub enum Error {
     IoError(std::io::Error),
     AppNotFoundError,
     ResponseParseError,
+    SizedStringError,
 }
 
 impl Display for Error {
@@ -26,6 +27,7 @@ impl Into<Vec<u8>> for Error {
             Self::IoError(_) => &[1],
             Self::AppNotFoundError => &[2],
             Self::ResponseParseError => &[3],
+            Self::SizedStringError => &[4],
         });
         bytes
     }

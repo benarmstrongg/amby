@@ -1,6 +1,8 @@
 use crate::constants::{NAME_MAX_SIZE, REQUEST_TYPE_SIZE};
-use crate::traits::{ToBytes, ToSlice, TryFromSlice};
+use crate::traits::ToBytes;
 use crate::types::Error;
+
+use super::Name;
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum Request {
@@ -10,18 +12,18 @@ pub enum Request {
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct ReadRequest {
-    pub protocol_name: String,
-    pub app_name: String,
-    pub service_name: String,
-    pub entity_name: String,
+    pub protocol_name: Name,
+    pub app_name: Name,
+    pub service_name: Name,
+    pub entity_name: Name,
 }
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct WriteRequest {
-    pub protocol_name: String,
-    pub app_name: String,
-    pub service_name: String,
-    pub entity_name: String,
+    pub protocol_name: Name,
+    pub app_name: Name,
+    pub service_name: Name,
+    pub entity_name: Name,
     pub data: Vec<u8>,
 }
 
@@ -36,22 +38,22 @@ impl Into<Vec<u8>> for Request {
             Self::Read(ReadRequest { protocol_name, .. })
             | Self::Write(WriteRequest { protocol_name, .. }) => protocol_name.clone(),
         };
-        bytes.extend_from_slice(&protocol_name.to_slice::<NAME_MAX_SIZE>());
+        bytes.extend_from_slice(&protocol_name.to_bytes());
         let app_name = match &self {
             Self::Read(ReadRequest { app_name, .. })
             | Self::Write(WriteRequest { app_name, .. }) => app_name.clone(),
         };
-        bytes.extend_from_slice(&app_name.to_slice::<NAME_MAX_SIZE>());
+        bytes.extend_from_slice(&app_name.to_bytes());
         let service_name = match &self {
             Self::Read(ReadRequest { service_name, .. })
             | Self::Write(WriteRequest { service_name, .. }) => service_name.clone(),
         };
-        bytes.extend_from_slice(&service_name.to_slice::<NAME_MAX_SIZE>());
+        bytes.extend_from_slice(&service_name.to_bytes());
         let entity_name = match &self {
             Self::Read(ReadRequest { entity_name, .. })
             | Self::Write(WriteRequest { entity_name, .. }) => entity_name.clone(),
         };
-        bytes.extend_from_slice(&entity_name.to_slice::<NAME_MAX_SIZE>());
+        bytes.extend_from_slice(&entity_name.to_bytes());
         match self {
             Self::Read(_) => bytes,
             Self::Write(WriteRequest { data, .. }) => {
@@ -68,13 +70,13 @@ impl TryFrom<Vec<u8>> for Request {
     fn try_from(value: Vec<u8>) -> Result<Self, Self::Error> {
         let request_type = value[0];
         let mut pos = REQUEST_TYPE_SIZE;
-        let protocol_name = String::try_from_slice(&value[pos..pos + NAME_MAX_SIZE])?;
+        let protocol_name = Name::try_from_slice(&value[pos..pos + NAME_MAX_SIZE])?;
         pos += NAME_MAX_SIZE;
-        let app_name = String::try_from_slice(&value[pos..pos + NAME_MAX_SIZE])?;
+        let app_name = Name::try_from_slice(&value[pos..pos + NAME_MAX_SIZE])?;
         pos += NAME_MAX_SIZE;
-        let service_name = String::try_from_slice(&value[pos..pos + NAME_MAX_SIZE])?;
+        let service_name = Name::try_from_slice(&value[pos..pos + NAME_MAX_SIZE])?;
         pos += NAME_MAX_SIZE;
-        let entity_name = String::try_from_slice(&value[pos..pos + NAME_MAX_SIZE])?;
+        let entity_name = Name::try_from_slice(&value[pos..pos + NAME_MAX_SIZE])?;
         pos += NAME_MAX_SIZE;
         if request_type == 0 {
             Ok(Self::Read(ReadRequest {
